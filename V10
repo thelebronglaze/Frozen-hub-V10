@@ -2647,25 +2647,6 @@ return v1
 }
 
 -- ============================================================================
--- RAYFIELD UI
--- ============================================================================
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
-local Window = Rayfield:CreateWindow({
-    Name = "⚡ FROZEN HUB v13 ⚡",
-    LoadingTitle = "ULTIMATE MULTI-PLAYER EXPLOITATION",
-    LoadingSubtitle = "Inglewood LA RP | Complete Bypass | Server-Side Registered",
-    Theme = "DarkBlue",
-    ConfigurationSaving = {
-        Enabled = true,
-        FolderName = "FrozenHubV13",
-        FileName = "FrozenUltraV13Config"
-    },
-    KeySystem = false,
-    NotifySide = "Right"
-})
-
--- ============================================================================
 -- ADVANCED REMOTE SYSTEM
 -- ============================================================================
 local RemoteCache = {}
@@ -3181,36 +3162,28 @@ local function ActivateBypass()
     end)
 end
 
--- Load Rayfield UI
+-- ============================================================================
+-- RAYFIELD UI
+-- ============================================================================
+
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
--- Create Window
+
 local Window = Rayfield:CreateWindow({
-    Name = "FROZEN HUB V13",
-    LoadingTitle = "SubZero",
-    LoadingSubtitle = "FROZEN HUB",
+    Name = "⚡ FROZEN HUB v13 ⚡",
+    LoadingTitle = "SubZero Execution",
+    LoadingSubtitle = "Inglewood LA RP | Anti-Cheat Bypass",
     Theme = "DarkBlue",
-    ConfigurationSaving = { 
-        Enabled = true, 
-        FolderName = "FrozenHubConfig",
-        FileName = "FrozenHubConfig"
-    },
-    Discord = {
+    ConfigurationSaving = {
         Enabled = true,
-        Invite = "pzfdyCwRT", -- Enter only the code (e.g., "j6H8kL2")
-        RememberJoins = true 
+        FolderName = "FrozenHubV13",
+        FileName = "FrozenConfig"
     },
-    KeySystem = false -- Set to true if you want to add a key system later
-})
-    KeybindList = {
-        {
-            Name = "Toggle UI",
-            Key = "K"
-        }
-    }
+    KeySystem = false,
+    DisabledWindowTitle = "FROZEN HUB (DISABLED)"
 })
 
 -- ============================================================================
--- TABS & UI
+-- TABS 
 -- ============================================================================
 local HomeTab = Window:CreateTab("🏠 HOME", 4483362458)
 local PlayerTab = Window:CreateTab("👤 PLAYER", 4483362458)
@@ -3588,14 +3561,17 @@ game:GetService("CoreGui").ChildRemoved:Connect(function(child)
     end
 end)
 
--- Final notification
+-- ============================================================================
+-- STARTUP
+-- ============================================================================
+
 task.wait(1)
 Rayfield:Notify({
-    Title = "⚡ FROZEN HUB v13 ⚡",
-    Content = "COMPLETE | Multi-Player | Server-Registered | Fully Bypassed",
+    Title = "⚡ FROZEN HUB v13 LOADED ⚡",
+    Content = "All Features Ready | Server-Registered | Anti-Cheat Bypassed",
     Duration = 5,
     Image = 4483362458
 })
 
-print("[FROZEN HUB v13] EXPLOIT FULLY LOADED FOR: " .. LocalPlayer.Name)
-print("[FROZEN HUB v13] ALL SYSTEMS OPERATIONAL")
+print("[FROZEN HUB v13] Successfully loaded for: " .. LocalPlayer.Name)
+print("[FROZEN HUB v13] Discord: discord.gg/pzfdyCwRT")
