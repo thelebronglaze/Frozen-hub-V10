@@ -55,10 +55,6 @@ end
   local StarterGui = game:GetService("StarterGui")
   local CoreGui = game:GetService("CoreGui")
   local Camera = Workspace.CurrentCamera
-  local task = task
-  local pcall = pcall
-  local warn = warn
-  local print = print
 
 -- State Variables
 local State = {
