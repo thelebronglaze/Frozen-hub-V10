@@ -60,140 +60,6 @@ end
   local warn = warn
   local print = print
 
-------------------------------------------------
-  -- Executor compatibility: detect many helpers --
-  ------------------------------------------------
-  -- We'll try to find common exploit functions under many names.
-  local EXPLOIT = {}
-
-  -- Generic function fetch helper
-  local function safe_getglobal(name)
-    local ok, val = pcall(function() return _G[name] end)
-    if ok and val ~= nil then return val end
-    if _ENV and _ENV[name] ~= nil then return _ENV[name] end
-    return nil
-  end
-
-  -- Try many possible function names for firing proximity prompts / clickdetectors
-  EXPLOIT.fireproximityprompt = safe_getglobal("fireproximityprompt")
-    or safe_getglobal("fireproximityprompt2")
-    or safe_getglobal("fire_proximity_prompt")
-    or safe_getglobal("firePrompt")
-    or safe_getglobal("fireprompt")
-
-  EXPLOIT.fireclickdetector = safe_getglobal("fireclickdetector")
-    or safe_getglobal("fireClickDetector")
-    or safe_getglobal("fireclick")
-    or safe_getglobal("fireClick")
-
-  EXPLOIT.firetouchinterest = safe_getglobal("firetouchinterest")
-    or safe_getglobal("fireTouchInterest")
-    or safe_getglobal("firetouch")
-
-  -- getgenv wrapper (some executors support getgenv)
-  local _getgenv = safe_getglobal("getgenv") or function() return _G end
-
-  -- virtual user fallback (roblox)
-  local VirtualUser = nil
-  pcall(function() VirtualUser = game:GetService("VirtualUser") end)
-
-  ------------------------------------------------------
-  -- Universal wrappers: these call exploit functions
-  -- if present, otherwise try safe Roblox fallbacks.
-  ------------------------------------------------------
-  local function universalFireProximityPrompt(prompt, hold)
-    if not prompt or not prompt:IsA("ProximityPrompt") then return false end
-
-    -- If exploit provides a direct function, use it
-    if EXPLOIT.fireproximityprompt then
-      pcall(function() EXPLOIT.fireproximityprompt(prompt, hold) end)
-      return true
-    end
-
-    -- Try ClickDetector on parent
-    pcall(function()
-      local parent = prompt.Parent
-      local cd = parent:FindFirstChildWhichIsA("ClickDetector")
-      if cd then
-        if EXPLOIT.fireclickdetector then
-          pcall(function() EXPLOIT.fireclickdetector(cd) end)
-        else
-          pcall(function() cd:FireClick() end)
-        end
-      else
-        -- Fallback: use VirtualUser to click (best-effort)
-        if VirtualUser then
-          pcall(function() VirtualUser:Button1Down(Vector2.new(0,0)); task.wait(0.05); VirtualUser:Button1Up(Vector2.new(0,0)) end)
-        end
-      end
-    end)
-
-    -- Last fallback: call :InputHold / :Trigger if available
-    pcall(function()
-      if prompt.InputHoldEnabled and typeof(prompt.HoldDuration) == "number" then
-        -- Some custom prompts expose direct methods
-        if prompt.Trigger then pcall(function() prompt:Trigger() end) end
-      end
-    end)
-
-    return true
-  end
-
-  local function universalFireClickDetector(cd)
-    if not cd or not cd:IsA("ClickDetector") then return false end
-    if EXPLOIT.fireclickdetector then
-      pcall(function() EXPLOIT.fireclickdetector(cd) end)
-      return true
-    end
-    pcall(function() cd:FireClick() end)
-    return true
-  end
-
-  local function universalFireTouch(part, other)
-    if not part or not other then return false end
-    if EXPLOIT.firetouchinterest then
-      pcall(function() EXPLOIT.firetouchinterest(part, other, 0) end)
-      pcall(function() EXPLOIT.firetouchinterest(part, other, 1) end)
-      return true
-    end
-    -- fallback: try touch simulation by setting CFrame briefly (best-effort, may be unreliable)
-    pcall(function()
-      local orig = part.CFrame
-      part.CFrame = other.CFrame
-      task.wait(0.03)
-      part.CFrame = orig
-    end)
-    return true
-  end
-
-  ----------------------------------
-  -- Basic helper utilities
-  ----------------------------------
-  local function safeFind(obj, name)
-    if not obj then return nil end
-    local ok, res = pcall(function() return obj:FindFirstChild(name, true) end)
-    if ok then return res end
-    return nil
-  end
-
-  local function hasHumanoidRoot(player)
-    return player and player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-  end
-
-  local function DistanceBetweenPlayers(p1, p2)
-    if not hasHumanoidRoot(p1) or not hasHumanoidRoot(p2) then return math.huge end
-    return (p1.Character.HumanoidRootPart.Position - p2.Character.HumanoidRootPart.Position).Magnitude
-  end
-
-  -- Robust teleport function: sets HumanoidRootPart.CFrame, returns true on success
-  local function Teleport(cframe)
-    if not (LocalPlayer and LocalPlayer.Character) then return false end
-    local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not hrp then return false end
-    pcall(function() hrp.CFrame = cframe end)
-    return true
-  end
-
 -- State Variables
 local State = {
     godmode = false,
@@ -3318,6 +3184,34 @@ local function ActivateBypass()
         end)
     end)
 end
+
+-- Load Rayfield UI
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+-- Create Window
+local Window = Rayfield:CreateWindow({
+    Name = "FROZEN HUB V13",
+    LoadingTitle = "SubZero",
+    LoadingSubtitle = "FROZEN HUB",
+    Theme = "DarkBlue",
+    ConfigurationSaving = { 
+        Enabled = true, 
+        FolderName = "FrozenHubConfig",
+        FileName = "FrozenHubConfig"
+    },
+    Discord = {
+        Enabled = true,
+        Invite = "pzfdyCwRT", -- Enter only the code (e.g., "j6H8kL2")
+        RememberJoins = true 
+    },
+    KeySystem = false -- Set to true if you want to add a key system later
+})
+    KeybindList = {
+        {
+            Name = "Toggle UI",
+            Key = "K"
+        }
+    }
+})
 
 -- ============================================================================
 -- TABS & UI
